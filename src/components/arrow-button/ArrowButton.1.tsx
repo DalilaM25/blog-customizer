@@ -1,14 +1,10 @@
 import arrow from 'src/images/arrow.svg';
 import clsx from 'clsx';
 import styles from './ArrowButton.module.scss';
+import { Props } from './ArrowButton';
 
-/** Функция для обработки открытия/закрытия формы */
-export type OnClick = () => void;
-export interface Props {
-	onClick?: OnClick;
-	visibility?: boolean;
-}
 export const ArrowButton = (props: Props) => {
+
 	const imgClass = clsx(styles.arrow, {
 		[styles.arrow_open]: props.visibility,
 	});
