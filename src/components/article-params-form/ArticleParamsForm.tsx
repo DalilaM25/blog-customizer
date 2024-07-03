@@ -3,7 +3,7 @@ import { Button } from 'components/button';
 import { Text } from '../text';
 import clsx from 'clsx';
 import styles from './ArticleParamsForm.module.scss';
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { OnClick } from '../arrow-button/ArrowButton';
 import { Select } from '../select';
 import { RadioGroup } from '../radio-group';
@@ -25,14 +25,15 @@ type Props = {
 };
 
 export const ArticleParamsForm = (props: Props) => {
-	const [visibility, setVisibility] = useState(false);
+	const [formVisibility, setFormVisibility] = useState(false);
+	const formRef = useRef<HTMLFormElement>(null);
 
 	const toggleVisibility: OnClick = () => {
-		setVisibility(!visibility);
+		setFormVisibility(!formVisibility);
 	};
 
-	const Class = clsx(styles.container, {
-		[styles.container_open]: visibility,
+	const containerClass = clsx(styles.container, {
+		[styles.container_open]: formVisibility,
 	});
 
 	const [selectedState, setSelectedState] = useState(defaultArticleState);
@@ -42,23 +43,37 @@ export const ArticleParamsForm = (props: Props) => {
 			setSelectedState((prevState) => ({ ...prevState, [field]: value }));}
 	};
 
-	const handleReset = () => {
+	const handleFormReset = () => {
 		setSelectedState(defaultArticleState);
 		props.stateReset();
-		setVisibility(false);
+		setFormVisibility(false);
 	};
 
-	const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+	const handleFormSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
 		evt.preventDefault();
 		props.stateSubmit(selectedState);
-		setVisibility(false);
+		setFormVisibility(false);
 	};
+
+	useEffect(() => {
+		function handleClickOutside(e: MouseEvent) {
+			if (formRef.current && !formRef.current.contains(e.target as Node)) {
+				setFormVisibility(false);
+			}
+		}
+
+		document.addEventListener('mousedown', handleClickOutside);
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [formVisibility, setFormVisibility, formRef]);
 
 	return (
 		<>
-			<ArrowButton visibility={visibility} onClick={toggleVisibility} />
-			<aside className={Class}>
-				<form className={styles.form} onSubmit={handleSubmit}>
+			<ArrowButton visibility={formVisibility} onClick={toggleVisibility} />
+			<aside className={containerClass} ref={formRef}>
+				<form className={styles.form} onSubmit={handleFormSubmit}>
 					<Text
 						as='h2'
 						size={31}
@@ -97,7 +112,7 @@ export const ArticleParamsForm = (props: Props) => {
 						onChange={handleState('contentWidth')}></Select>
 
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' onClick={handleReset} />
+						<Button title='Сбросить' type='reset' onClick={handleFormReset} />
 						<Button title='Применить' type='submit' />
 					</div>
 				</form>
