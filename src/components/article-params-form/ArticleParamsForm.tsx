@@ -61,7 +61,7 @@ export const ArticleParamsForm = (props: Props) => {
 				setFormVisibility(false);
 			}
 		}
-
+		if (!formVisibility) return;
 		document.addEventListener('mousedown', handleClickOutside);
 
 		return () => {
