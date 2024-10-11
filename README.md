@@ -1,4 +1,4 @@
-# Проект Mesto
+# Проект Blog-customizer
 [![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=flat&logo=typescript&logoColor=white)](#)
 [![React](https://img.shields.io/badge/React-18-58E1FF?logo=react)](#)
 
